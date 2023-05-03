@@ -1,0 +1,80 @@
+﻿@using ElectricTransportBlog.Core.Models.Line
+@using Microsoft.AspNetCore.Identity
+@using ElectricTransportBlog.Core.Constants
+@using ElectricTransportBlog.Infrastructure.Data.Models
+
+@model LineDetailsModel
+@inject SignInManager<WebsiteUser> SignInManager
+@inject UserManager<WebsiteUser> UserManager
+
+@{
+    ViewBag.Title = $"Линия {Model.Number}";
+}
+
+<section class="content">
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-primary">
+            <div class="card-header">
+                <h3 class="product-title"><a asp-controller="Line" asp-action="Details" asp-route-id="@Model.Id">Линия номер: @Model.Number</a></h3>
+            </div>
+            <div class="card-body">
+                <article>
+                    <div class="card-body">
+                        <div class="col-12">
+                            <table id="example" class="table table-bordered table-hover dataTable dtr-inline">
+                                <thead>
+                                    <tr class="table-success">
+                                        <th width="40%">Категория</th>
+                                        <th width="60%">Резултат</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="">
+                                        <td>Град</td>
+                                        <td>@Model.TransportNetworkTown</td>
+                                    </tr>
+                                    <tr class="">
+                                        <td>Номер на линията</td>
+                                        <td>@Model.Number</td>
+                                    </tr>
+                                    <tr class="@Model.LineType.ClassColor">
+                                        <td>Тип превозно средство</td>
+                                        <td>@Model.LineType.TypeOfVehicle</td>
+                                    </tr>
+                                    <tr class="">
+                                        <td>Маршрут</td>
+                                        <td>@Model.ShortLineDescription</td>
+                                    </tr>
+                                    <tr class="">
+                                        <td>Подробно описание</td>
+                                        <td>@(Model.LineDescription == null ? "Няма резултат" : Model.LineDescription)</td>
+                                    </tr>
+                                    <tr class="">
+                                        <td>Интервал през работните дни (в минути)</td>
+                                        <td>@(Model.WorkDayInterval == null ? "Няма резултат" : Model.WorkDayInterval)</td>
+                                    </tr>
+                                    <tr class="">
+                                        <td>Интервал през почивните дни (в минути)</td>
+                                        <td>@(Model.WeekendInterval == null ? "Няма резултат" : Model.WeekendInterval)</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    @if (this.User.IsInRole(UserConstants.Administrator) || this.User.IsInRole(UserConstants.Moderator))
+                    {
+                        <div class="d-flex justify-content-center justify-content-between">
+                            <a asp-controller="Line" asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning float-left">Редактирай</a>
+                            <a asp-controller="Line" asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger float-right">Изтрий</a>
+                        </div>
+                    }
+                </article>
+            </div>
+        </div>
+    </div>
+</section>
+
+    @section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    }

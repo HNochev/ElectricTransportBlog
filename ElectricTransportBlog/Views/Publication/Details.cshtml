@@ -1,0 +1,99 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using ElectricTransportBlog.Core.Constants
+@using ElectricTransportBlog.Core.Models.Publication
+@using ElectricTransportBlog.Core.Models.PublicationComments
+@using ElectricTransportBlog.Infrastructure.Data.Models
+
+@model PublicationCommentsModel
+@inject SignInManager<WebsiteUser> SignInManager
+@inject UserManager<WebsiteUser> UserManager
+
+@{
+    ViewBag.Title = @Model.Title;
+}
+
+<div class="row">
+    <div class="col-md-10 offset-md-1">
+        <div class="card card-primary">
+            <div class="card-header">
+                <h3 class="product-title"><a asp-controller="Publication" asp-action="Details" asp-route-id="@Model.Id">@Model.Title</a></h3>
+            </div>
+            <div class="card-body">
+                <article>
+                    <header class="entry-header">
+                        <meta http-equiv="Content-Type" content="text/html; charset=windows-1251">
+                        <div class="entry-thumbnail">
+                            <img class="img-fluid" src="@Model.ImgUrlFormDatabase" alt="Снимка">
+                        </div>
+                        <b class="entry-date right">Публикувана на: @Model.Date.ToString("D")</b>
+                    </header>
+                    <div class="entry-content">
+                        <p class="short-content">
+                            @Html.Raw(@Model.Description)
+                        </p>
+                        <h4> Автор: <a asp-controller="User" asp-action="UserProfile" asp-route-id="@UserManager.Users.Where(x => x.UserName == Model.Author.UserName).Select(x => x.Id).First()" >@Model.Author.UserName</a></h4>
+                    </div>
+                    @if (this.User.IsInRole(UserConstants.Administrator) || this.User.IsInRole(UserConstants.Moderator))
+                    {
+                        <a asp-controller="Publication" asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger float-right">Изтрий</a>
+                        <a asp-controller="Publication" asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning float-left">Редактирай</a>
+                    }
+                </article>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-12 text-center">
+    </div>
+    <div class="col-md-10 offset-md-1">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fa fa-comments"></i>
+                    Всички Коментари <b>@Model.PublicationComments.Count</b>
+                </h3>
+            </div>
+            @if (Model.PublicationComments.Count == 0)
+            {
+                <h2 class="text-center">Няма коментари!</h2>
+            }
+            else
+            {
+                @foreach (var comment in Model.PublicationComments)
+                {
+                    <div>
+                        <blockquote>
+                            <small>Автор: <cite title="Source Title"><a asp-controller="User" asp-action="UserProfile" asp-route-id="@UserManager.Users.Where(x => x.UserName == comment.User.UserName).Select(x => x.Id).First()" >@comment.User.UserName</a></cite></small>
+                            <p>@comment.Content</p>
+                            <small>Публикуван на: <cite title="Source Title">@comment.Date.ToString("f")</cite></small>
+                            @if (this.User.IsInRole(UserConstants.Administrator) || this.UserManager.GetUserId(User) == comment.User.Id || this.User.IsInRole(UserConstants.Moderator))
+                            {
+                                <a asp-controller="PublicationComments" asp-action="Delete" asp-route-id="@comment.Id" class="btn btn-danger float-right">Изтрий</a>
+                                <a asp-controller="PublicationComments" asp-action="Edit" asp-route-id="@comment.Id" class="btn btn-warning float-right">Редактирай</a>
+                            }
+                            @if (comment.LastEditedOn != null)
+                            {
+                                <br>
+
+                                <small>Последна редакция на: <cite title="Source Title">@comment.LastEditedOn.Value.ToString("f")</cite></small>
+                            }
+                        </blockquote>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+    @if (this.SignInManager.IsSignedIn(User))
+    {
+        <partial name="_PartialAddComment" />
+    }
+    else
+    {
+        <div class="col-md-10 offset-md-1">
+            <h3 class="text-center">За да коментирате, <a asp-area="Identity" asp-page="/Account/Login">влезте</a> в профила си или се <a asp-area="Identity" asp-page="/Account/Register">регистрирайте</a>.</h3>
+        </div>
+    }
+</div>
+
+@section Scripts {
+<partial name="_ValidationScriptsPartial" />
+}

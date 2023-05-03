@@ -1,0 +1,125 @@
+﻿@using ElectricTransportBlog.Core.Models.TransportNetwork
+@using Microsoft.AspNetCore.Identity
+@using ElectricTransportBlog.Core.Constants
+@using ElectricTransportBlog.Infrastructure.Data.Models
+
+@model TransportNetworkContactLinesModel
+@inject SignInManager<WebsiteUser> SignInManager
+@inject UserManager<WebsiteUser> UserManager
+
+@{
+    ViewBag.Title = @Model.Town;
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-primary">
+            <div class="card-header">
+                <h3 class="product-title"><a asp-controller="TransportNetwork" asp-action="Details" asp-route-id="@Model.Id">@Model.Town</a></h3>
+            </div>
+            <div class="card-body">
+                <article>
+                    <header class="entry-header">
+                        <meta http-equiv="Content-Type" content="text/html; charset=windows-1251">
+                        <div class="entry-thumbnail">
+                            <img class="img-fluid" src="@Model.ImgUrlFormDatabase" alt="Снимка">
+                        </div>
+                        @*<b class="entry-date right">Публикувана на: @Model.Date.ToString("D")</b>*@
+                    </header>
+                    <div class="entry-content">
+                        <h4> Публикувано от: <a asp-controller="User" asp-action="UserProfile" asp-route-id="@UserManager.Users.Where(x => x.UserName == Model.PublishedBy.UserName).Select(x => x.Id).First()" >@Model.PublishedBy.UserName</a></h4>
+                    </div>
+                    <div class="card-body">
+                        <dl class="row">
+                            <dt class="col-sm-3">Описание:</dt>
+                            <dd class="col-sm-9">@Model.Description</dd>
+                            <dt class="col-sm-12 text-center">Контакти</dt>
+                            @if (Model.Contact != null)
+                            {
+                                <dt class="col-sm-3">Имейл:</dt>
+                                <dd class="col-sm-9">@(Model.Contact.Email != null ? Model.Contact.Email : "Няма информация")</dd>
+                                <dt class="col-sm-3">Телефон:</dt>
+                                <dd class="col-sm-9">@(Model.Contact.PhoneNumber != null ? Model.Contact.PhoneNumber : "Няма информация")</dd>
+                                <dt class="col-sm-3">Уебсайт:</dt>
+                                <dd class="col-sm-9">
+                                    <div>
+                                        <a href="@(Model.Contact.WebPage != null ? @Model.Contact.WebPage : $"../../TransportNetwork/Details/{Model.Id}")">@(Model.Contact.WebPage != null ? @Model.Contact.WebPage : "Няма информация")</a>
+                                    </div>
+                                </dd>
+                            }
+                            else
+                            {
+                                <p>Няма добавен контакт!</p>
+                            }
+                            <dt class="col-sm-12 text-center">Линии</dt>
+                            @if (Model.Lines.Count() != 0)
+                            {
+                                <div class="col-12">
+                                    <table id="example" class="table table-bordered table-hover dataTable dtr-inline">
+                                        <thead>
+                                            <tr class="table-success">
+                                                <th tabindex="0" rowspan="1" colspan="1" width="30%">Номер</th>
+                                                <th tabindex="0" rowspan="5" colspan="1" width="70%">Кратко описание</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var line in Model.Lines)
+                                            {
+                                                <tr class="@line.LineType.ClassColor">
+                                                    <td><a asp-controller="Line" asp-action="Details" asp-route-id="@line.Id">@line.Number</a></td>
+                                                    <td>@line.ShortLineDescription</td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="col-12">
+                                    <h3 class="text-center">Няма добавени линии!</h3>
+                                </div>
+                            }
+                        </dl>
+                    </div>
+                    @if (this.User.IsInRole(UserConstants.Administrator))
+                    {
+                        <div class="d-flex justify-content-center justify-content-between">
+                            <a asp-controller="TransportNetwork" asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning float-left">Редактирай</a>
+                            <a asp-controller="TransportNetwork" asp-action="AddContact" asp-route-id="@Model.Id" class="btn btn-primary">Добави/Промени Контакт</a>
+                            <a asp-controller="Line" asp-action="Add" asp-route-id="@Model.Id" class="btn btn-success">Добави линия</a>
+                            <a asp-controller="TransportNetwork" asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger float-right">Изтрий</a>
+                        </div>
+                    }
+                </article>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-12 text-center">
+    </div>
+
+    <div class="col-12">
+    <h2 class="text-center">Брой електрически линии: @Model.Lines.Count()</h2>
+        <table class="table text-center col-md-6 offset-md-3">
+            <thead>
+              <tr>
+                <th scope="col">Цветово кодиране</th>
+              </tr>
+            </thead>
+            <tbody>
+                <tr class="table-danger">
+                  <th scope="row">Трамвайна линия</th>
+                </tr>
+                <tr class="table-primary">
+                  <th scope="row">Тролейбусна линия</th>
+                </tr>
+                <tr class="table-warning">
+                  <th scope="row">Електробусна линия</th>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+@section Scripts {
+<partial name="_ValidationScriptsPartial" />
+}

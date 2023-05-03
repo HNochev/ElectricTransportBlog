@@ -1,0 +1,33 @@
+﻿@using ElectricTransportBlog.Core.Models.Line
+@model LineDeleteModel
+
+@{
+    ViewData["Title"] = "Изтриване на публикация";
+}
+
+<div class="row">
+    <div class="col-md-6 offset-md-3">
+        <div class="card card-danger">
+            <div class="card-header">
+                <h3 class="card-title">Сигурен ли сте, че искате да изтриете линия номер:</h3>
+            </div>
+            <form method="post">
+                <div class="card-body">
+                    <div class="form-group text-center">
+                        <h3 class="text-center" asp-for="Number">@Model.Number</h3><br>
+                        <h5 class="text-center" asp-for="ShortDescription">С маршрут: @Model.ShortDescription</h5><br>
+                        <b class="text-center" asp-for="TownName">Град: @Model.TownName</b>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <a asp-controller="TransportNetwork" asp-action="All" class="btn btn-secondary">Отказ</a>
+                    <button type="submit" class="btn btn-danger float-right">Изтрий</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

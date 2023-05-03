@@ -1,0 +1,44 @@
+﻿@using ElectricTransportBlog.Core.Models.TransportNetwork
+@model TransportNetworkEditFormModel
+
+@{
+    ViewData["Title"] = "Редактирай транспортна мрежа";
+}
+
+<div class="row">
+    <div class="col-md-10 offset-md-1">
+        <div class="card card-warning">
+            <div class="card-header">
+                <h3 class="card-title">Редактирай транспортната мрежа</h3>
+            </div>
+            <form enctype="multipart/form-data" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label asp-for="Town"></label>
+                        <input asp-for="Town" class="form-control" placeholder="Добавете заглавие">
+                        <span asp-validation-for="Town" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Description"></label>
+                        <textarea asp-for="Description" class="form-control" rows="8" placeholder="Добавете съдържанието тук"></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label asp-for="FileUpload.PhotoFile" class="control-label"></label>
+                        <input asp-for="FileUpload.PhotoFile" type="file" class="form-control">
+                        <span asp-validation-for="FileUpload.PhotoFile" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <a asp-controller="TransportNetwork" asp-action="All" class="btn btn-secondary">Отказ</a>
+                    <input asp-page-handler="Upload" class="btn btn-warning float-right" type="submit" value="Редактирай">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,44 @@
+﻿@using ElectricTransportBlog.Core.Models.TransportNetwork
+@model TransportNetworkContactEditModel
+
+@{
+    ViewData["Title"] = "Добави/Промени Контакт";
+}
+
+<div class="row">
+    <div class="col-md-10 offset-md-1">
+        <div class="card card-warning">
+            <div class="card-header">
+                <h3 class="card-title">Добави/Промени Контакт</h3>
+            </div>
+            <form enctype="multipart/form-data" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label asp-for="Email"></label>
+                        <input asp-for="Email" class="form-control" placeholder="Добавете имейл">
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="PhoneNumber"></label>
+                        <input asp-for="PhoneNumber" class="form-control" placeholder="Добавете телефонен номер">
+                        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="WebPage"></label>
+                        <input asp-for="WebPage" class="form-control" placeholder="Адрес на уеб страница тук">
+                        <span asp-validation-for="WebPage" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <a asp-controller="TransportNetwork" asp-action="All" class="btn btn-secondary">Отказ</a>
+                    <input asp-page-handler="Upload" class="btn btn-warning float-right" type="submit" value="Запази промените">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
